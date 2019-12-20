@@ -8,18 +8,16 @@ import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
 
-class LocationUtils(val context: Context ,val activity: Activity,val premission_id: Int) {
-     val contexts: Context
+class LocationUtils(val activity: Activity,val premission_id: Int) {
      val activitys: Activity
     val premission_ids : Int
     init {
-       contexts = this.context
         activitys = this.activity
         premission_ids = this.premission_id
     }
 
      fun isLocationEnabled(): Boolean {
-        var locationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var locationManager: LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER
         )
@@ -27,11 +25,11 @@ class LocationUtils(val context: Context ,val activity: Activity,val premission_
 
     fun checkPermissions(): Boolean {
         if (ActivityCompat.checkSelfPermission(
-                context,
+                activity,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
-                context,
+                activity,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {

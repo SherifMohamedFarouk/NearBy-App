@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        locationUtils = LocationUtils(this, this, PERMISSION_ID)
+        locationUtils = LocationUtils(this,  PERMISSION_ID)
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -110,11 +110,11 @@ class MainActivity : AppCompatActivity() {
               editor.apply()
               editor.commit()
           }
-          val sharedNameValue = sharedPreferences.getString("mode_key","defaultmode")
+          val sharedNameValue = sharedPreferences.getString("mode_key","Realtime")
           textchossenmode.text = sharedNameValue
 
       }
-      val sharedNameValue = sharedPreferences.getString("mode_key","defaultmode")
+      val sharedNameValue = sharedPreferences.getString("mode_key","Realtime")
       textchossenmode.text = sharedNameValue
 
   }
