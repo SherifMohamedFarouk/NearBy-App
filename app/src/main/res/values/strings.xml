@@ -2,5 +2,6 @@
     <string name="app_name">NearBy</string>
     <string name="Realtime">Realtime</string>
     <string name="Single_Update">Single Update</string>
+    <string name="title_activity_splash">SplashActivity</string>
 
 </resources>

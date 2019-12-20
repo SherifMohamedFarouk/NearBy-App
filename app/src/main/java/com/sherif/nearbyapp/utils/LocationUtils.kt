@@ -7,17 +7,13 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
+import com.sherif.nearbyapp.MyApplication.Companion.appContext
 
-class LocationUtils(val activity: Activity,val premission_id: Int) {
-     val activitys: Activity
-    val premission_ids : Int
-    init {
-        activitys = this.activity
-        premission_ids = this.premission_id
-    }
+class LocationUtils {
+
 
      fun isLocationEnabled(): Boolean {
-        var locationManager: LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var locationManager: LocationManager = appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER
         )
@@ -25,11 +21,11 @@ class LocationUtils(val activity: Activity,val premission_id: Int) {
 
     fun checkPermissions(): Boolean {
         if (ActivityCompat.checkSelfPermission(
-                activity,
+                appContext,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
-                activity,
+                appContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -38,11 +34,11 @@ class LocationUtils(val activity: Activity,val premission_id: Int) {
         return false
     }
 
-     fun requestPermissions() {
+     fun requestPermissions(context:Context) {
         ActivityCompat.requestPermissions(
-            activity,
+            context as Activity,
             arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
-            premission_id
+            LOCATION_REQUEST_CODE_PERMISSION
         )
     }
 
