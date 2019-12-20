@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitleTextColor="#f5fbff"
+        app:titleTextColor="#fff"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/textchossenmode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Realtime"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+       app:layout_constraintRight_toRightOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        android:paddingRight="10dp"
+        />
+    <TextView
+        android:id="@+id/textmode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mode : "
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+        app:layout_constraintRight_toLeftOf="@id/textchossenmode"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        />
+
+    <TextView
+        android:id="@+id/latTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Latitude: "
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        />
+    <TextView
+    android:id="@+id/lonTextView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Longitude: "
+    app:layout_constraintTop_toBottomOf="@id/latTextView"
+    />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
