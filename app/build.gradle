@@ -36,6 +36,7 @@ buildscript {
     ext.materialDesign_Version = '1.1.0-alpha07'
     ext.koin_version = '2.0.1'
     ext.Glide_version = '4.9.0'
+    ext.lottieVersion = '3.0.0'
 }
 
 dependencies {
@@ -82,6 +83,10 @@ dependencies {
     implementation "org.koin:koin-android-scope:$koin_version"
 // Koin Android ViewModel features
     implementation "org.koin:koin-android-viewmodel:$koin_version"
+
 // Google Location services
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+    // Lottie for animation
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 }
