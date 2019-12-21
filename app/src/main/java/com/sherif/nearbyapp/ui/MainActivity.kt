@@ -14,12 +14,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.sherif.nearbyapp.R
 import kotlinx.android.synthetic.main.activity_main.*
 import android.provider.Settings
+import android.view.View
+import androidx.lifecycle.Observer
 import com.google.android.gms.location.*
+import com.sherif.nearbyapp.ViewModel.MainViewModel
 import com.sherif.nearbyapp.utils.*
+import org.koin.android.ext.android.inject
 
 
 class MainActivity : AppCompatActivity() {
-
+    private val mainViewModel: MainViewModel by inject()
     lateinit var mFusedLocationClient: FusedLocationProviderClient
     var sharedPref = SharedPref()
     lateinit var  locationUtils: LocationUtils
@@ -31,20 +35,36 @@ class MainActivity : AppCompatActivity() {
         locationUtils = LocationUtils()
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        getviewModel()
+//        getLastLocation()
+//
+//        chooseMode()
+//
+//        initMode()
+//        val mainHandler = Handler(Looper.getMainLooper())
+//        mainHandler.post(object : Runnable {
+//            override fun run() {
+//                requestNewLocationData()
+//                mainHandler.postDelayed(this, 10000)
+//            }
+//        })
 
-        getLastLocation()
 
-        chooseMode()
-
-        initMode()
-        val mainHandler = Handler(Looper.getMainLooper())
-        mainHandler.post(object : Runnable {
-            override fun run() {
-                requestNewLocationData()
-                mainHandler.postDelayed(this, 10000)
-            }
-        })
     }
+    private fun getviewModel(){
+        mainViewModel.exception.observe(this, Observer { ExpMessage ->
+            Toast.makeText(this , ExpMessage , Toast.LENGTH_SHORT).show()
+//            mainProgressBar.visibility = View.GONE
+
+        })
+
+        mainViewModel.locationlist.observe(this, Observer {locationList ->  Toast.makeText(this , locationList.toString() , Toast.LENGTH_SHORT).show()
+//            mainProgressBar.visibility = View.GONE
+        })
+//        mainProgressBar.visibility = View.VISIBLE
+        mainViewModel.LoadLocation()
+    }
+
 
     @SuppressLint("MissingPermission")
     private fun getLastLocation() {
