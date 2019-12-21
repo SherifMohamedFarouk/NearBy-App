@@ -19,4 +19,14 @@ class SharedPref {
         return  sharedPreferences.getString(MODEKEY,DEFAULTMODE)
 
     }
+    fun setLatLong(key:String ,value :Float ){
+        val editor:SharedPreferences.Editor =  sharedPreferences.edit()
+        editor.putFloat(key,value)
+        editor.apply()
+        editor.commit()
+    }
+    fun getLatLong(key:String ):Float{
+        return  sharedPreferences.getFloat(key, 0.0F)
+
+    }
 }

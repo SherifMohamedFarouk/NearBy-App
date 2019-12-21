@@ -15,9 +15,7 @@ import com.sherif.nearbyapp.R
 import kotlinx.android.synthetic.main.activity_main.*
 import android.provider.Settings
 import com.google.android.gms.location.*
-import com.sherif.nearbyapp.utils.LOCATION_REQUEST_CODE_PERMISSION
-import com.sherif.nearbyapp.utils.LocationUtils
-import com.sherif.nearbyapp.utils.SharedPref
+import com.sherif.nearbyapp.utils.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,10 +40,7 @@ class MainActivity : AppCompatActivity() {
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.post(object : Runnable {
             override fun run() {
-             val Distance =  measure(37.4406,-122.1430,37.4429 ,-122.1444)
-
-                val toast = Toast.makeText(applicationContext, Distance.toString(), Toast.LENGTH_SHORT)
-                toast.show()
+                requestNewLocationData()
                 mainHandler.postDelayed(this, 10000)
             }
         })
@@ -61,9 +56,12 @@ class MainActivity : AppCompatActivity() {
                     if (location == null) {
                         requestNewLocationData()
                     } else {
-
-                        findViewById<TextView>(R.id.latTextView).text = location.latitude.toString()
-                        findViewById<TextView>(R.id.lonTextView).text = location.longitude.toString()
+                        sharedPref.setLatLong(LATITUDE,location.latitude.toFloat())
+                        sharedPref.setLatLong(LONGITUDE,location.longitude.toFloat())
+                        val latitude1 = sharedPref.getLatLong(LATITUDE)
+                        val longitude1 = sharedPref.getLatLong(LONGITUDE)
+                        findViewById<TextView>(R.id.latTextView).text = latitude1.toString()
+                        findViewById<TextView>(R.id.lonTextView).text = longitude1.toString()
                     }
                 }
             } else {
@@ -94,11 +92,13 @@ class MainActivity : AppCompatActivity() {
     private val mLocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             var mLastLocation: Location = locationResult.lastLocation
-            findViewById<TextView>(R.id.latTextView).text = mLastLocation.latitude.toString()
-            findViewById<TextView>(R.id.lonTextView).text = mLastLocation.longitude.toString()
-            val toast = Toast.makeText(applicationContext, mLastLocation.latitude.toString(), Toast.LENGTH_SHORT)
+            val latitude1 = sharedPref.getLatLong(LATITUDE)
+            val longitude1 = sharedPref.getLatLong(LONGITUDE)
+            val Distance =  locationUtils.measure(latitude1.toDouble(),longitude1.toDouble(), mLastLocation.latitude ,mLastLocation.longitude)
+            val toast = Toast.makeText(applicationContext, Distance.toString(), Toast.LENGTH_SHORT)
+            findViewById<TextView>(R.id.latTextView).text = latitude1.toString()
+            findViewById<TextView>(R.id.lonTextView).text =  Distance.toString()
             toast.show()
-
         }
     }
 
@@ -116,17 +116,7 @@ class MainActivity : AppCompatActivity() {
     fun initMode(){
         textchossenmode.text = sharedPref.getMode()
     }
-    fun measure(latitude1:Double, longitude1:Double, latitude2:Double, longitude2:Double):Double{  // generally used geo measurement function
-        var radius = 6378.137; // Radius of earth in KM
-        var dlatitude = latitude2 * Math.PI / 180 - latitude1 * Math.PI / 180;
-        var dlongitude = longitude2 * Math.PI / 180 - longitude1 * Math.PI / 180;
-        var area = Math.sin(dlatitude/2) * Math.sin(dlatitude/2) +
-                Math.cos(latitude1 * Math.PI / 180) * Math.cos(latitude2 * Math.PI / 180) *
-                Math.sin(dlongitude/2) * Math.sin(dlongitude/2);
-        var circumference = 2 * Math.atan2(Math.sqrt(area), Math.sqrt(1-area));
-        var ditance = radius * circumference;
-        return ditance * 1000; // meters
-    }
+
 }
 
 

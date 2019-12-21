@@ -42,4 +42,16 @@ class LocationUtils {
         )
     }
 
+    fun measure(latitude1:Double, longitude1:Double, latitude2:Double, longitude2:Double):Double{  // generally used geo measurement function
+        var radius = 6378.137; // Radius of earth in KM
+        var dlatitude = latitude2 * Math.PI / 180 - latitude1 * Math.PI / 180;
+        var dlongitude = longitude2 * Math.PI / 180 - longitude1 * Math.PI / 180;
+        var area = Math.sin(dlatitude/2) * Math.sin(dlatitude/2) +
+                Math.cos(latitude1 * Math.PI / 180) * Math.cos(latitude2 * Math.PI / 180) *
+                Math.sin(dlongitude/2) * Math.sin(dlongitude/2);
+        var circumference = 2 * Math.atan2(Math.sqrt(area), Math.sqrt(1-area));
+        var ditance = radius * circumference;
+        return ditance * 1000; // meters
+    }
+
 }
