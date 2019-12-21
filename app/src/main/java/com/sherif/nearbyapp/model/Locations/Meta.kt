@@ -1,4 +1,4 @@
-package com.sherif.nearbyapp.Model.Photos
+package com.sherif.nearbyapp.model.Locations
 
 data class Meta(
     val code: Int,

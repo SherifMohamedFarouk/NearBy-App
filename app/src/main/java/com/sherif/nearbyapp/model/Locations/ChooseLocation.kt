@@ -1,4 +1,4 @@
-package com.sherif.nearbyapp.Model.Locations
+package com.sherif.nearbyapp.model.Locations
 
 data class ChooseLocation(
     val meta: Meta,

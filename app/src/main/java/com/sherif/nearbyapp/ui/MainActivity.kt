@@ -2,11 +2,8 @@ package com.sherif.nearbyapp.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import android.widget.TextView
 import android.widget.Toast
@@ -14,10 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.sherif.nearbyapp.R
 import kotlinx.android.synthetic.main.activity_main.*
 import android.provider.Settings
-import android.view.View
 import androidx.lifecycle.Observer
 import com.google.android.gms.location.*
-import com.sherif.nearbyapp.ViewModel.MainViewModel
+import com.sherif.nearbyapp.viewmodel.MainViewModel
 import com.sherif.nearbyapp.utils.*
 import org.koin.android.ext.android.inject
 

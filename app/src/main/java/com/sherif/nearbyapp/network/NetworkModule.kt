@@ -1,6 +1,6 @@
 package com.sherif.nearbyapp.network
 
-import com.sherif.nearbyapp.ViewModel.MainViewModel
+import com.sherif.nearbyapp.viewmodel.MainViewModel
 import com.sherif.nearbyapp.network.NetworkUtils.createWebService
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
