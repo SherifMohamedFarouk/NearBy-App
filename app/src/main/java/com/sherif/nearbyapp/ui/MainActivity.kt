@@ -12,6 +12,9 @@ import com.sherif.nearbyapp.R
 import kotlinx.android.synthetic.main.activity_main.*
 import android.provider.Settings
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.kotlinkoinmvp.adapters.LocationAdapter
 import com.google.android.gms.location.*
 import com.sherif.nearbyapp.viewmodel.MainViewModel
 import com.sherif.nearbyapp.utils.*
@@ -23,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var mFusedLocationClient: FusedLocationProviderClient
     var sharedPref = SharedPref()
     lateinit var  locationUtils: LocationUtils
-
+    private lateinit var locationAdapter :LocationAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         locationUtils = LocationUtils()
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        startRecucleview()
         getviewModel()
 //        getLastLocation()
 //
@@ -47,6 +51,13 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+    private fun startRecucleview(){
+        // initializing catAdapter with empty list
+        locationAdapter = LocationAdapter(ArrayList())
+        // apply allows you to alter variables inside the object and assign them
+        LocationRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+        LocationRecyclerView.adapter = locationAdapter
+    }
     private fun getviewModel(){
         mainViewModel.exception.observe(this, Observer { ExpMessage ->
             Toast.makeText(this , ExpMessage , Toast.LENGTH_SHORT).show()
@@ -54,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        mainViewModel.locationlist.observe(this, Observer {locationList ->  Toast.makeText(this , locationList.toString() , Toast.LENGTH_SHORT).show()
+        mainViewModel.locationlist.observe(this, Observer {locationList ->  locationAdapter.updatelist(locationList.response.groups[0].items)
 //            mainProgressBar.visibility = View.GONE
         })
 //        mainProgressBar.visibility = View.VISIBLE
@@ -76,8 +87,6 @@ class MainActivity : AppCompatActivity() {
                         sharedPref.setLatLong(LONGITUDE,location.longitude.toFloat())
                         val latitude1 = sharedPref.getLatLong(LATITUDE)
                         val longitude1 = sharedPref.getLatLong(LONGITUDE)
-                        findViewById<TextView>(R.id.latTextView).text = latitude1.toString()
-                        findViewById<TextView>(R.id.lonTextView).text = longitude1.toString()
                     }
                 }
             } else {
@@ -112,8 +121,6 @@ class MainActivity : AppCompatActivity() {
             val longitude1 = sharedPref.getLatLong(LONGITUDE)
             val Distance =  locationUtils.measure(latitude1.toDouble(),longitude1.toDouble(), mLastLocation.latitude ,mLastLocation.longitude)
             val toast = Toast.makeText(applicationContext, Distance.toString(), Toast.LENGTH_SHORT)
-            findViewById<TextView>(R.id.latTextView).text = latitude1.toString()
-            findViewById<TextView>(R.id.lonTextView).text =  Distance.toString()
             toast.show()
         }
     }
