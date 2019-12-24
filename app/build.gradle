@@ -89,4 +89,6 @@ dependencies {
 
     // Lottie for animation
     implementation "com.airbnb.android:lottie:$lottieVersion"
+    // LatLong
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 }

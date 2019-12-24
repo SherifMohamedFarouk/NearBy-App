@@ -4,5 +4,6 @@ data class Venue(
     val categories: List<Category>,
     val id: String,
     val location: Location,
-    val name: String
+    val name: String,
+    var imageUrl: String
 )

@@ -9,90 +9,37 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
 import com.sherif.nearbyapp.MyApplication.Companion.appContext
+import com.sherif.nearbyapp.model.enum.PhotosSize
 import com.sherif.nearbyapp.model.locations.ChooseLocation
+import com.sherif.nearbyapp.model.locations.Venue
+import com.sherif.nearbyapp.model.photos.PhotoItem
 import com.sherif.nearbyapp.model.photos.Photos
 import com.sherif.nearbyapp.network.LocationRepo
 import com.sherif.nearbyapp.utils.*
+import com.sherif.nearbyapp.utils.SharedPref.getLatLong
+import com.sherif.nearbyapp.utils.SharedPref.setLatLong
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 
 class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
-    val locationlist = MutableLiveData<ChooseLocation>()
-    val photoslist = MutableLiveData<Photos>()
+    val locationlist = MutableLiveData<List<Venue>>()
+    val Photoslist = MutableLiveData<Venue>()
     val exception = MutableLiveData<String>()
+    val loading = MutableLiveData<Int>()
     var disposable: Disposable? = null
     private val  locationUtils: LocationUtils = LocationUtils()
-    var sharedPref = SharedPref()
-     var mFusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(appContext)
-
-    fun LoadLocation(context: Context) {
-        getLastLocation(context)
-
-        val latlongformat = String.format("%s,%s",sharedPref.getLatLong(LATITUDE)
-            .toString(),sharedPref.getLatLong(LONGITUDE).toString())
-
-        if(sharedPref.getMode()=="Realtime") {
-            val mainHandler = Handler(Looper.getMainLooper())
-            mainHandler.post(object : Runnable {
-                override fun run() {
-                    sharedPref.getMode()
-                    val latlongformat = String.format("%s,%s",sharedPref.getLatLong(LATITUDE)
-                        .toString(),sharedPref.getLatLong(LONGITUDE).toString())
-
-                    disposable = locationRepo.getLocations(CLIENT_ID,CLIENT_SECERET,latlongformat)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                            { result -> Log.v("Near me", "" + result)
-                                locationlist.value = result
-                            },
-                            { error -> Log.e("ERROR", error.message)
-                                exception.value = error.toString()
-                            }
-                        )
-
-                    requestNewLocationData()
-                    mainHandler.postDelayed(this, 10000)
-                }
-            })
-        }
-        else{
-            disposable = locationRepo.getLocations(CLIENT_ID,CLIENT_SECERET,latlongformat)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { result -> Log.v("Near me", "" + result)
-                        locationlist.value = result
-                    },
-                    { error -> Log.e("ERROR", error.message)
-                        exception.value = error.toString()
-                    }
-                )
-
-        }
-
-
-    }
-
-    fun LoadPhotos(id:String){
-        disposable = locationRepo.getPhotos(CLIENT_ID,CLIENT_SECERET,id)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { result -> Log.v("Near me", "" + result)
-                    photoslist.value = result
-                },
-                { error -> Log.e("ERROR", error.message)
-                    exception.value = error.toString()
-                }
-            )
-    }
+     var mFusedLocationClient: FusedLocationProviderClient =
+         LocationServices.getFusedLocationProviderClient(appContext)
 
     @SuppressLint("MissingPermission")
     private fun getLastLocation(context: Context) {
@@ -104,30 +51,95 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
                     if (location == null) {
                         requestNewLocationData()
                     } else {
-                        sharedPref.setLatLong(LATITUDE,location.latitude.toFloat())
-                        sharedPref.setLatLong(LONGITUDE,location.longitude.toFloat())
+                        val latestlatlng = LatLng(location.latitude, location.longitude)
+                        SharedPref.setLatLong(latestlatlng)
+                        LoadLocation(latestlatlng)
                     }
                 }
             } else {
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                appContext.startActivity(intent)
+                context.startActivity(intent)
             }
         } else {
             locationUtils.requestPermissions(context as Activity)
         }
     }
 
+    fun LoadLocation(latLng: LatLng) {
+        val latlongformat = String.format(
+            "%s,%s", latLng.latitude
+                .toString(), latLng.longitude
+        )
 
-    @SuppressLint("MissingPermission")
+        disposable =
+            locationRepo.getLocations(CLIENT_ID, CLIENT_SECRET, latlongformat)
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.doOnSubscribe { loading.value = View.VISIBLE }
+                ?.doOnComplete { loading.value = View.GONE }
+                ?.subscribe(
+                    { result ->
+
+                        locationlist.value = result
+                        LoadPhotos(result)
+                    },
+                    { error ->
+                        exception.value = error.toString()
+                    }
+                )
+
+    }
+
+    fun LoadPhotos(listOfLocations: List<Venue>){
+        listOfLocations.forEach {
+            val venueObs = Observable.just(it)
+            val venue =
+                Observable.zip(venueObs, venueObs.flatMap { t ->
+                    locationRepo.getPhotos(
+                        t.id,
+                        CLIENT_ID,
+                        CLIENT_SECRET
+                    )
+                },
+                    BiFunction<Venue, List<PhotoItem>, Venue> { t1, t2 ->
+                        if (t2.size > 0)
+                            t1.imageUrl = t2.get(0).prefix + PhotosSize.SMALL.value + t2.get(0).suffix
+                        t1
+                    }
+                )
+            venue
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { loading.value = View.VISIBLE }
+                .doFinally {
+                    loading.value = View.GONE
+
+                }
+                .subscribe(
+                    { result ->
+                        Photoslist.value = result
+                    },
+                    { error ->
+                        exception.value = error.toString()
+                    }
+                )
+        }
+    }
+
+
+
+
+
+
+
+
     private fun requestNewLocationData() {
-        var mLocationRequest = LocationRequest()
+        val mLocationRequest = LocationRequest()
         mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        mLocationRequest.interval = 0
-        mLocationRequest.fastestInterval = 0
-        mLocationRequest.numUpdates = 1
+        mLocationRequest.interval = 2000
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(appContext)
-        mFusedLocationClient!!.requestLocationUpdates(
+        mFusedLocationClient.requestLocationUpdates(
             mLocationRequest, mLocationCallback,
             Looper.myLooper()
         )
@@ -136,22 +148,33 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
 
     private val mLocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-            var mLastLocation: Location = locationResult.lastLocation
-            val latitude1 = sharedPref.getLatLong(LATITUDE)
-            val longitude1 = sharedPref.getLatLong(LONGITUDE)
-            val Distance =  locationUtils.measure(latitude1.toDouble(),longitude1.toDouble(), mLastLocation.latitude ,mLastLocation.longitude)
-            sharedPref.setLatLong(DISTANCE,Distance.toFloat())
-            val sharedDistance = sharedPref.getLatLong(DISTANCE)
-            val toast = Toast.makeText(appContext, sharedDistance.toString(), Toast.LENGTH_SHORT)
-            toast.show()
-            if (sharedDistance >= 500.0 ){
-                sharedPref.setLatLong(LATITUDE,mLastLocation.latitude.toFloat())
-                sharedPref.setLatLong(LONGITUDE,mLastLocation.longitude.toFloat())
+            val mLastLocation: Location = locationResult.lastLocation
+            val latLong = getLatLong()
+            val distance = locationUtils.measure(
+                latLong.latitude,
+                latLong.longitude,
+                mLastLocation.latitude,
+                mLastLocation.longitude
+            )
+            if (distance >= 500.0) {
+                setLatLong(LatLng(mLastLocation.latitude, mLastLocation.longitude))
+                LoadLocation(LatLng(mLastLocation.latitude, mLastLocation.longitude))
             }
         }
     }
 
-
+    private fun initiateGetLocations(latLng: LatLng) {
+        val latlongformat = String.format(
+            "%s,%s", latLng.latitude
+                .toString(), latLng.longitude
+        )
+        }
+    fun Updating(){
+        requestNewLocationData()
+    }
+    fun StopUpdating(){
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback)
+    }
 
     override fun onCleared() {
         super.onCleared()
