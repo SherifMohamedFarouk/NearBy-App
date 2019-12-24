@@ -42,7 +42,7 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
          LocationServices.getFusedLocationProviderClient(appContext)
 
     @SuppressLint("MissingPermission")
-    private fun getLastLocation(context: Context) {
+     fun getLastLocation(context: Context) {
         if (locationUtils.checkPermissions()) {
             if (locationUtils.isLocationEnabled()) {
 
@@ -163,12 +163,7 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
         }
     }
 
-    private fun initiateGetLocations(latLng: LatLng) {
-        val latlongformat = String.format(
-            "%s,%s", latLng.latitude
-                .toString(), latLng.longitude
-        )
-        }
+
     fun Updating(){
         requestNewLocationData()
     }

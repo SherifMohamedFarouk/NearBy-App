@@ -1,6 +1,6 @@
 package com.sherif.nearbyapp.utils
 
-const val BASE_URL = "https://api.foursquare.com/v2/venues/"
+const val LOCATION_API = "https://api.foursquare.com/v2/venues/"
 
 // -------------------------------------------------------------------------------
 //  Permissions Request Code

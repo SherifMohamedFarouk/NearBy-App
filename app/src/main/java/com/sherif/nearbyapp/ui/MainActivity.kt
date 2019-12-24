@@ -18,8 +18,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlinkoinmvp.adapters.LocationAdapter
 import com.google.android.gms.location.*
+import com.sherif.nearbyapp.model.enum.ModeType
 import com.sherif.nearbyapp.viewmodel.MainViewModel
 import com.sherif.nearbyapp.utils.*
+import com.sherif.nearbyapp.utils.SharedPref.getMode
+import com.sherif.nearbyapp.utils.SharedPref.setMode
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
@@ -27,79 +30,82 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by inject()
-    var sharedPref = SharedPref()
-    private lateinit var locationAdapter :LocationAdapter
+    private lateinit var locationAdapter: LocationAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
         startRecycleview()
-
         getviewModel()
-
         chooseMode()
-
         initMode()
-
-        realtimeChangeMeters()
 
 
     }
-    private fun startRecycleview(){
+
+    private fun startRecycleview() {
         // initializing catAdapter with empty list
         locationAdapter = LocationAdapter(ArrayList())
         // apply allows you to alter variables inside the object and assign them
         LocationRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
         LocationRecyclerView.adapter = locationAdapter
     }
-    private fun getviewModel(){
+
+    private fun getviewModel() {
         mainViewModel.exception.observe(this, Observer { ExpMessage ->
-            Toast.makeText(this , ExpMessage , Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, ExpMessage, Toast.LENGTH_SHORT).show()
 //            mainProgressBar.visibility = View.GONE
 
         })
 
-        mainViewModel.locationlist.observe(this, Observer {locationList ->  locationAdapter.updatelist(locationList.response.groups[0].items )
+        mainViewModel.locationlist.observe(this, Observer { locationList ->
+            locationAdapter.updatelist(locationList)
 //            mainProgressBar.visibility = View.GONE
-            mainViewModel.LoadPhotos(locationList.response.groups[0].items[1].venue.id)
+
         })
+        mainViewModel.Photoslist.observe(
+            this,
+            Observer { photoslist -> locationAdapter.updateID(photoslist) })
 
 //        mainProgressBar.visibility = View.VISIBLE
-        mainViewModel.LoadLocation(this)
+        mainViewModel.getLastLocation(this)
     }
 
-  fun chooseMode(){
-      textchossenmode.setOnClickListener{
-          if(textchossenmode.text == "Realtime" ){
-              sharedPref.setMode("Single Update")
-              textchossenmode.text ="Single Update"
-          }else {sharedPref.setMode("Realtime" )
-              textchossenmode.text ="Realtime"
-          } }
-  }
-
-    fun initMode(){
-        textchossenmode.text = sharedPref.getMode()
-
-    }
-
-    fun realtimeChangeMeters(){
-            val mainHandler = Handler(Looper.getMainLooper())
-            mainHandler.post(object : Runnable {
-                override fun run() {
-                    sharedPref.getMode()
-                    if(sharedPref.getMode()=="Realtime"&&sharedPref.getLatLong(DISTANCE) >= 500.0) {
-                        startRecycleview()
-                    }
-                        mainHandler.postDelayed(this, 10000)
-
+    fun chooseMode() {
+        textchossenmode.setOnClickListener {
+            when (textchossenmode.text) {
+                ModeType.REALTIME.value -> {
+                    updateMode(ModeType.SINGLE_UPDATE.value)
+                    mainViewModel.StopUpdating()
                 }
-            })
+                else -> {
+                    updateMode(ModeType.REALTIME.value)
+                    mainViewModel.Updating()
+                }
+            }
         }
-
     }
 
+
+
+    fun initMode() {
+        textchossenmode.text = getMode()
+        when (getMode()) {
+            ModeType.REALTIME.value -> {
+                mainViewModel.Updating()
+
+            }
+        }
+    }
+
+    private fun updateMode(modeType: String) {
+        setMode(modeType)
+        textchossenmode.text = modeType
+    }
+
+
+}
 
 
 
