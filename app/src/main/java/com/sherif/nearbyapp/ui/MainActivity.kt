@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        startRecucleview()
+        startRecycleview()
 
         getviewModel()
 
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-    private fun startRecucleview(){
+    private fun startRecycleview(){
         // initializing catAdapter with empty list
         locationAdapter = LocationAdapter(ArrayList())
         // apply allows you to alter variables inside the object and assign them
@@ -60,9 +60,11 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        mainViewModel.locationlist.observe(this, Observer {locationList ->  locationAdapter.updatelist(locationList.response.groups[0].items)
+        mainViewModel.locationlist.observe(this, Observer {locationList ->  locationAdapter.updatelist(locationList.response.groups[0].items )
 //            mainProgressBar.visibility = View.GONE
+            mainViewModel.LoadPhotos(locationList.response.groups[0].items[1].venue.id)
         })
+
 //        mainProgressBar.visibility = View.VISIBLE
         mainViewModel.LoadLocation(this)
     }
@@ -88,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                 override fun run() {
                     sharedPref.getMode()
                     if(sharedPref.getMode()=="Realtime"&&sharedPref.getLatLong(DISTANCE) >= 500.0) {
-                        startRecucleview()
+                        startRecycleview()
                     }
                         mainHandler.postDelayed(this, 10000)
 

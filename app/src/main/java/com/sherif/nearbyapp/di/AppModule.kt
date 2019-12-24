@@ -1,5 +1,6 @@
-package com.sherif.nearbyapp.network
+package com.sherif.nearbyapp.di
 
+import com.sherif.nearbyapp.network.LocationRepo
 import com.sherif.nearbyapp.viewmodel.MainViewModel
 import com.sherif.nearbyapp.network.NetworkUtils.createWebService
 import com.sherif.nearbyapp.utils.LocationUtils

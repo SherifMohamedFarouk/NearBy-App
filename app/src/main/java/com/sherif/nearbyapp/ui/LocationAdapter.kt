@@ -1,21 +1,13 @@
 package com.example.kotlinkoinmvp.adapters
 
-import android.app.Activity
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.sherif.nearbyapp.MyApplication
 import com.sherif.nearbyapp.R
-import com.sherif.nearbyapp.model.Locations.ChooseLocation
-import com.sherif.nearbyapp.model.Locations.Group
-import com.sherif.nearbyapp.model.Locations.Item
-import com.sherif.nearbyapp.model.Locations.Venue
+import com.sherif.nearbyapp.model.locations.Item
 
 
 class LocationAdapter ( var dataList : List<Item>):

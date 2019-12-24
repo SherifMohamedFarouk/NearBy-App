@@ -10,22 +10,21 @@ import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.*
-import com.sherif.nearbyapp.MyApplication
 import com.sherif.nearbyapp.MyApplication.Companion.appContext
-import com.sherif.nearbyapp.model.Locations.ChooseLocation
+import com.sherif.nearbyapp.model.locations.ChooseLocation
+import com.sherif.nearbyapp.model.photos.Photos
 import com.sherif.nearbyapp.network.LocationRepo
 import com.sherif.nearbyapp.utils.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import org.koin.android.ext.android.inject
 
 class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
     val locationlist = MutableLiveData<ChooseLocation>()
+    val photoslist = MutableLiveData<Photos>()
     val exception = MutableLiveData<String>()
     var disposable: Disposable? = null
     private val  locationUtils: LocationUtils = LocationUtils()
@@ -79,6 +78,20 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
         }
 
 
+    }
+
+    fun LoadPhotos(id:String){
+        disposable = locationRepo.getPhotos(CLIENT_ID,CLIENT_SECERET,id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { result -> Log.v("Near me", "" + result)
+                    photoslist.value = result
+                },
+                { error -> Log.e("ERROR", error.message)
+                    exception.value = error.toString()
+                }
+            )
     }
 
     @SuppressLint("MissingPermission")

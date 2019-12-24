@@ -1,6 +1,6 @@
-package com.sherif.nearbyapp.model.Photos
+package com.sherif.nearbyapp.model.photos
 
-data class Item(
+data class PhotoItem(
     val createdAt: Int,
     val height: Int,
     val id: String,

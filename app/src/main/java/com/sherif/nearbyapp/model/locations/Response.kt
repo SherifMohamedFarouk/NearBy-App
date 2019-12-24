@@ -1,4 +1,4 @@
-package com.sherif.nearbyapp.model.Locations
+package com.sherif.nearbyapp.model.locations
 
 data class Response(
     val groups: List<Group>,

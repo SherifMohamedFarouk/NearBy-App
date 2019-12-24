@@ -1,4 +1,4 @@
-package com.sherif.nearbyapp.model.Locations
+package com.sherif.nearbyapp.model.locations
 
 data class Venue(
     val categories: List<Category>,

@@ -3,11 +3,13 @@ package com.sherif.nearbyapp.ui
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.sherif.nearbyapp.R
 import com.sherif.nearbyapp.utils.LOCATION_REQUEST_CODE_PERMISSION
 import com.sherif.nearbyapp.utils.LocationUtils
+import kotlinx.android.synthetic.main.activity_splash.*
 import java.util.*
 
 class SplashActivity : AppCompatActivity() {
@@ -25,12 +27,11 @@ class SplashActivity : AppCompatActivity() {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 if (locationUtils.checkPermissions()) {
 
-                    Timer().schedule(object : TimerTask() {
-                        override fun run() {
-                            intent = Intent(applicationContext, MainActivity::class.java)
-                            startActivity(intent)
-                        }
-                    }, 2500)
+                    Handler().postDelayed({
+                        intent = Intent(applicationContext, MainActivity::class.java)
+                        startActivity(intent)
+                    }, animation_view.duration)
+
                 }
 
             }
