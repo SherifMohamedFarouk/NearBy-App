@@ -13,9 +13,11 @@ import com.sherif.nearbyapp.R
 import kotlinx.android.synthetic.main.activity_main.*
 import android.provider.Settings
 import android.util.Log
+import android.view.View.GONE
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.kotlinkoinmvp.adapters.LocationAdapter
 import com.google.android.gms.location.*
 import com.sherif.nearbyapp.model.enum.ModeType
@@ -30,7 +32,9 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by inject()
+
     private lateinit var locationAdapter: LocationAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -54,21 +58,39 @@ class MainActivity : AppCompatActivity() {
 
     private fun getviewModel() {
         mainViewModel.exception.observe(this, Observer { ExpMessage ->
-            Toast.makeText(this, ExpMessage, Toast.LENGTH_SHORT).show()
-//            mainProgressBar.visibility = View.GONE
+
+             if(ExpMessage.contains("429")){
+                 Toast.makeText(this, "the photos quota has been excceded", Toast.LENGTH_SHORT).show()
+             }else{
+                 DataError()
+                 Toast.makeText(this, ExpMessage, Toast.LENGTH_LONG).show()
+                 Log.v("ExpMessage",ExpMessage)
+             }
+
 
         })
 
         mainViewModel.locationlist.observe(this, Observer { locationList ->
-            locationAdapter.updatelist(locationList)
-//            mainProgressBar.visibility = View.GONE
+
+            if(locationList.isEmpty()){
+                   noData()
+               }else {
+                   locationAdapter.updatelist(locationList)
+               }
+
 
         })
+
         mainViewModel.Photoslist.observe(
             this,
             Observer { photoslist -> locationAdapter.updateID(photoslist) })
 
-//        mainProgressBar.visibility = View.VISIBLE
+
+        mainViewModel.loading.observe(this, Observer { visibility ->
+            mainProgressBar.visibility = visibility
+        })
+
+
         mainViewModel.getLastLocation(this)
     }
 
@@ -99,9 +121,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateMode(modeType: String) {
+
+     fun updateMode(modeType: String) {
         setMode(modeType)
         textchossenmode.text = modeType
+    }
+
+    fun noData(){
+        errorText.text="No data found !!"
+        Glide.with(this).load(R.drawable.no_data_foreground)
+            .into(errorView)
+    }
+    fun DataError(){
+        errorText.text="Something went wrong !!"
+        Glide.with(this).load(R.drawable.error_data_foreground)
+            .into(errorView)
+        mainProgressBar.visibility = GONE
     }
 
 

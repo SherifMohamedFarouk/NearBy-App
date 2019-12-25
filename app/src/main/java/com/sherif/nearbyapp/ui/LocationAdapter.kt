@@ -8,8 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sherif.nearbyapp.MyApplication
+import com.sherif.nearbyapp.MyApplication.Companion.appContext
 import com.sherif.nearbyapp.R
-import com.sherif.nearbyapp.model.locations.Item
 import com.sherif.nearbyapp.model.locations.Venue
 
 
@@ -20,14 +20,15 @@ class LocationAdapter ( var dataList : ArrayList<Venue>):
         return dataList.size
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(MyApplication.appContext).inflate(R.layout.location_item, parent, false))
+        return ViewHolder(LayoutInflater.from(appContext).inflate(R.layout.location_item, parent, false))
     }
 
     override fun onBindViewHolder(holder:ViewHolder, position: Int) {
-      holder.nameview.text = dataList[position].name
-        holder.addressview.text = dataList[position].location.formattedAddress[0]
-        Glide.with(holder.itemView.context).load(dataList[position].imageUrl).placeholder(R.drawable.mapss)
-            .into(holder.ivIcon)
+        holder.tvName.text = dataList[position].name
+        holder.tvAddress.text = dataList[position].location.formattedAddress[0]
+
+        Glide.with(holder.itemView.context).load(dataList[position].imageUrl)
+            .placeholder(R.drawable.mapss).into(holder.ivIcon)
 
 
     }
@@ -53,8 +54,8 @@ class LocationAdapter ( var dataList : ArrayList<Venue>):
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var nameview: TextView =itemView.findViewById(R.id.locationname)
-        var addressview: TextView =itemView.findViewById(R.id.locationaddress)
-        var ivIcon: ImageView = itemView.findViewById(R.id.image1)
+        var tvName: TextView = itemView.findViewById(R.id.tv_location_name)
+        var tvAddress: TextView = itemView.findViewById(R.id.tv_location_address)
+        var ivIcon: ImageView = itemView.findViewById(R.id.iv_icon)
     }
 }

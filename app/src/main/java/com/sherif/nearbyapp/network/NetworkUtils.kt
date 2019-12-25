@@ -1,7 +1,7 @@
 package com.sherif.nearbyapp.network
 
 
-import com.sherif.nearbyapp.utils.LOCATION_API
+import com.sherif.nearbyapp.utils.BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -22,7 +22,7 @@ object NetworkUtils {
     // GsonConverterFactory is what will parse this JSON into our Cat Object
     fun createWebService(): LocationApi {
         val retrofit = Retrofit.Builder()
-            .baseUrl(LOCATION_API)
+            .baseUrl(BASE_URL)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(createHttpClient())

@@ -28,6 +28,7 @@ buildscript {
     ext.OkHttpInterceptor_Version = '3.12.0'
     ext.gson_version = '2.4.0'
     ext.retrofit_version = '2.4.0'
+    ext.rxJavaVersion = '2.6.0'
     ext.rxkotlin_Version = '2.3.0'
     ext.rxAndroid_Version = '2.1.1'
     ext.androidX_Version = '1.0.0'
@@ -37,6 +38,7 @@ buildscript {
     ext.koin_version = '2.0.1'
     ext.Glide_version = '4.9.0'
     ext.lottieVersion = '3.0.0'
+    ext.googlePlacesVersion = '17.0.0'
 }
 
 dependencies {
@@ -68,7 +70,7 @@ dependencies {
     //Rx
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_Version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroid_Version"
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$rxJavaVersion"
 
 
     //OkHTTP Logging Interceptor
@@ -85,10 +87,10 @@ dependencies {
     implementation "org.koin:koin-android-viewmodel:$koin_version"
 
 // Google Location services
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation "com.google.android.gms:play-services-location:$googlePlacesVersion"
 
     // Lottie for animation
     implementation "com.airbnb.android:lottie:$lottieVersion"
     // LatLong
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation "com.google.android.gms:play-services-maps:$googlePlacesVersion"
 }

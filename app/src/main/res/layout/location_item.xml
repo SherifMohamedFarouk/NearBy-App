@@ -3,66 +3,65 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="120dp"
     tools:context="ui.MainActivity">
 
     <androidx.cardview.widget.CardView
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        app:cardElevation="6sp"
-        app:cardCornerRadius="4dp"
-        android:layout_margin="16sp"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="16sp"
+        android:orientation="vertical"
         android:paddingBottom="12dp"
-        >
-        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="6sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/image1"
-            android:textSize="18sp"
-            android:scaleType="fitXY"
-            android:layout_gravity="left"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:src="@drawable/mapss"
-            />
-        <TextView
-            android:id="@+id/locationname"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="21sp"
-            android:text="the coffe bean"
-            android:textStyle="bold"
-            android:paddingTop="20dp"
-            app:layout_constraintLeft_toRightOf="@id/image1"
-            app:layout_constraintTop_toTopOf="parent"
-            android:paddingRight="20dp"
+            <ImageView
+                android:id="@+id/iv_icon"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_gravity="start"
+                android:layout_margin="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_location_name"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center|start"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintBottom_toTopOf="@id/tv_location_address"
+                app:layout_constraintLeft_toRightOf="@id/iv_icon"
+                app:layout_constraintTop_toTopOf="parent"
 
 
-            />
-        <TextView
-            android:id="@+id/locationaddress"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="15sp"
-            android:text="cafe masters rest house"
-            app:layout_constraintTop_toBottomOf="@id/locationname"
-            app:layout_constraintLeft_toRightOf="@id/image1"
-            android:paddingTop="10dp"
+                />
 
-
-            />
+            <TextView
+                android:id="@+id/tv_location_address"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center|start"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/iv_icon"
+                app:layout_constraintTop_toBottomOf="@id/tv_location_name" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

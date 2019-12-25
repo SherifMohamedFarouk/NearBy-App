@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+
 import com.sherif.nearbyapp.MyApplication.Companion.appContext
 import com.sherif.nearbyapp.model.enum.PhotosSize
 import com.sherif.nearbyapp.model.locations.ChooseLocation
@@ -52,7 +53,7 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
                         requestNewLocationData()
                     } else {
                         val latestlatlng = LatLng(location.latitude, location.longitude)
-                        SharedPref.setLatLong(latestlatlng)
+                          setLatLong(latestlatlng)
                         LoadLocation(latestlatlng)
                     }
                 }
@@ -72,7 +73,7 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
         )
 
         disposable =
-            locationRepo.getLocations(CLIENT_ID, CLIENT_SECRET, latlongformat)
+            locationRepo.getLocations(CLIENT_ID2, CLIENT_SECRET2, latlongformat)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe { loading.value = View.VISIBLE }
@@ -97,8 +98,8 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
                 Observable.zip(venueObs, venueObs.flatMap { t ->
                     locationRepo.getPhotos(
                         t.id,
-                        CLIENT_ID,
-                        CLIENT_SECRET
+                        CLIENT_ID2,
+                        CLIENT_SECRET2
                     )
                 },
                     BiFunction<Venue, List<PhotoItem>, Venue> { t1, t2 ->
@@ -125,12 +126,6 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
                 )
         }
     }
-
-
-
-
-
-
 
 
     private fun requestNewLocationData() {

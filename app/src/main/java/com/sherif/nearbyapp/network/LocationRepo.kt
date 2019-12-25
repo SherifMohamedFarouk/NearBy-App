@@ -35,7 +35,7 @@ class LocationRepo(private val locationApi:LocationApi) {
     ): Observable<List<PhotoItem>>? {
         return locationApi.getPhotos(id,client_id, client_secret).map { it ->
             val listOfPhotos = ArrayList<PhotoItem>()
-            it.response.photos.photoItems.forEach {
+            it.response.photos.items.forEach {
                 listOfPhotos.add(it)
             }
             listOfPhotos
