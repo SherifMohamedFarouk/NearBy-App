@@ -25,7 +25,7 @@ class LocationAdapter ( var dataList : ArrayList<Venue>):
 
     override fun onBindViewHolder(holder:ViewHolder, position: Int) {
         holder.tvName.text = dataList[position].name
-        holder.tvAddress.text = dataList[position].location.formattedAddress[0]
+        holder.tvAddress.text = dataList[position].location!!.formattedAddress[0]
 
         Glide.with(holder.itemView.context).load(dataList[position].imageUrl)
             .placeholder(R.drawable.mapss).into(holder.ivIcon)
@@ -45,7 +45,7 @@ class LocationAdapter ( var dataList : ArrayList<Venue>):
             val tempVenue = dataList.get(i)
             if (tempVenue.id == venue?.id) {
                 dataList.removeAt(i)
-                dataList.add(i, venue)
+                dataList.add(i, venue!!)
                 notifyItemChanged(i)
                 break
             }

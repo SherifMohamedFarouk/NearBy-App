@@ -39,15 +39,22 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
     val loading = MutableLiveData<Int>()
     var disposable: Disposable? = null
     private val  locationUtils: LocationUtils = LocationUtils()
-     var mFusedLocationClient: FusedLocationProviderClient =
-         LocationServices.getFusedLocationProviderClient(appContext)
+    var mFusedLocationClient: FusedLocationProviderClient? = null
+
+
+    fun initiateFusedLocation(){
+        mFusedLocationClient=
+            LocationServices.getFusedLocationProviderClient(appContext)
+    }
+
+
 
     @SuppressLint("MissingPermission")
      fun getLastLocation(context: Context) {
         if (locationUtils.checkPermissions()) {
             if (locationUtils.isLocationEnabled()) {
 
-                mFusedLocationClient.lastLocation.addOnCompleteListener(context as Activity) { task ->
+                mFusedLocationClient?.lastLocation?.addOnCompleteListener(context as Activity) { task ->
                     var location: Location? = task.result
                     if (location == null) {
                         requestNewLocationData()
@@ -73,7 +80,7 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
         )
 
         disposable =
-            locationRepo.getLocations(CLIENT_ID2, CLIENT_SECRET2, latlongformat)
+            locationRepo.getLocations(CLIENT_ID, CLIENT_SECRET, latlongformat)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe { loading.value = View.VISIBLE }
@@ -97,9 +104,9 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
             val venue =
                 Observable.zip(venueObs, venueObs.flatMap { t ->
                     locationRepo.getPhotos(
-                        t.id,
-                        CLIENT_ID2,
-                        CLIENT_SECRET2
+                        t.id!!  ,
+                        CLIENT_ID,
+                        CLIENT_SECRET
                     )
                 },
                     BiFunction<Venue, List<PhotoItem>, Venue> { t1, t2 ->
@@ -134,7 +141,7 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
         mLocationRequest.interval = 2000
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(appContext)
-        mFusedLocationClient.requestLocationUpdates(
+        mFusedLocationClient?.requestLocationUpdates(
             mLocationRequest, mLocationCallback,
             Looper.myLooper()
         )
@@ -163,7 +170,7 @@ class MainViewModel(private val locationRepo: LocationRepo):ViewModel()  {
         requestNewLocationData()
     }
     fun StopUpdating(){
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback)
+        mFusedLocationClient?.removeLocationUpdates(mLocationCallback)
     }
 
     override fun onCleared() {

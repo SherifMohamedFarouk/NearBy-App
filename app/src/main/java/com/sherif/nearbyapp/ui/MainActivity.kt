@@ -31,7 +31,7 @@ import org.koin.android.ext.android.inject
 
 
 class MainActivity : AppCompatActivity() {
-    private val mainViewModel: MainViewModel by inject()
+     val mainViewModel: MainViewModel by inject()
 
     private lateinit var locationAdapter: LocationAdapter
 
@@ -44,9 +44,16 @@ class MainActivity : AppCompatActivity() {
         getviewModel()
         chooseMode()
         initMode()
-
+        initiateCall()
 
     }
+
+
+    fun initiateCall() {
+        mainViewModel.initiateFusedLocation()
+        mainViewModel.getLastLocation(this)
+    }
+
 
     private fun startRecycleview() {
         // initializing catAdapter with empty list
@@ -55,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         LocationRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
         LocationRecyclerView.adapter = locationAdapter
     }
+
 
     private fun getviewModel() {
         mainViewModel.exception.observe(this, Observer { ExpMessage ->
@@ -76,6 +84,7 @@ class MainActivity : AppCompatActivity() {
                    noData()
                }else {
                    locationAdapter.updatelist(locationList)
+                clearData()
                }
 
 
@@ -93,6 +102,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.getLastLocation(this)
     }
+
 
     fun chooseMode() {
         textchossenmode.setOnClickListener {
@@ -132,6 +142,12 @@ class MainActivity : AppCompatActivity() {
         Glide.with(this).load(R.drawable.no_data_foreground)
             .into(errorView)
     }
+
+    fun clearData(){
+        errorText.visibility = GONE
+        errorView.visibility = GONE
+    }
+
     fun DataError(){
         errorText.text="Something went wrong !!"
         Glide.with(this).load(R.drawable.error_data_foreground)
