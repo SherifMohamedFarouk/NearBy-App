@@ -1,5 +1,5 @@
 # Getting Started
-It's an App that shows you the nearest spots to your current location , it's build using Model-View-ViewModel Concepts(MVVM) , Dependency Injections such as Koin (DI) , Lifecycles  , RxJava 2 (Networking) ,Play-services-location
+It's an App that shows you the nearest spots to your current location , it's build using Model-View-ViewModel Concepts(MVVM) , Dependency Injections such as Koin (DI) , Lifecycles  , RxJava 2 (Networking) ,Play-services-location,Mockito (For Unit Testing)
 
 
 
@@ -30,3 +30,4 @@ Familiar with Dependency Injections
 * Glide for loading images
 * Play-services-location
 * Lottie for animations
+* Mockito-inline for Junit mock test
